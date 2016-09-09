@@ -1,18 +1,15 @@
 var status = "";
-var logo = "";
 var user = "";
-var display_name = "";
-var game = "";
 var link = "";
-var html="";
 
 var users = ["OgamingSC2",
              "freecodecamp",
              "brunofin"];
 
 $(document).ready( function() {
-  
-  for (var i = 0; i < users.length; i++)
+  "use strict";
+
+  for (let i = 0; i < users.length; i++)
     getData(users[i], i);
     //users.forEach(getData);
   
@@ -25,10 +22,10 @@ $(document).ready( function() {
     var display_name = "";
     var game = "";
     var logo = "";
+    var html="";
 
     $.getJSON(streamURL, function(dataStream) { 
 
-      alert("");
 
       if (dataStream.error) {
 
@@ -43,6 +40,7 @@ $(document).ready( function() {
         '<div class="col-xs-5 col-sm-3" id="name">' + display_name + '</div>' + 
         '<div class="col-xs-5 col-sm-8" id="streaming">'+ game + '</div>' +
         '</div>';
+        $("#display").append(html);
       } else {
         if (dataStream.stream) {
           online = "True";
@@ -74,14 +72,14 @@ $(document).ready( function() {
             '<div class="col-xs-5 col-sm-3" id="name"><a href="' + dataChannel.url + '" target="_blank">' + display_name + '</a></div>' + 
             '<div class="col-xs-5 col-sm-8" id="streaming">'+ game + '</div>' +
             '</div>';
+            $("#display").append(html);
           }
         });
 
       }
 
-      alert("");
 
-      $("#display").append(html);
+      
 
     });
   }
