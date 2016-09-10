@@ -1,18 +1,11 @@
-var status = "";
-var user = "";
-var link = "";
-
-var users = ["OgamingSC2",
-             "freecodecamp",
-             "brunofin"];
+var users = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
 
 $(document).ready( function() {
   "use strict";
 
-  for (let i = 0; i < users.length; i++)
-    getData(users[i], i);
-    //users.forEach(getData);
-  
+  //for (let i = 0; i < users.length; i++)
+    getData(users[0], 0);
+
   function getData(user, index) {
     var streamURL = 'https://api.twitch.tv/kraken/streams/' + user + '?callback=?';
     var channelURL = 'https://api.twitch.tv/kraken/channels/' + user + '?callback=?';
@@ -20,12 +13,12 @@ $(document).ready( function() {
     var online = "False";
     var active = "False";
     var display_name = "";
-    var game = "";
+    var streaming = "";
     var logo = "";
     var html="";
+    var status = "active";
 
-    $.getJSON(streamURL, function(dataStream) { 
-
+    $.getJSON(streamURL, function(dataStream) {
 
       if (dataStream.error) {
 
@@ -33,13 +26,15 @@ $(document).ready( function() {
         active = "False";
         display_name = user;
         logo = "https://dummyimage.com/50x50/ecf0e7/5c5457.jpg&text=0x3F"
-        game = "Account Closed";
+        streaming = "Account Closed";
+        status = "inactive"
 
-        html = '<div class="row">' +
+        html = '<center><div class="row ' + status + '">' +
         '<div class="col-xs-2 col-sm-1" id="icon">' + '<img src="' + logo + '" height=50 width=50"></div>' +
         '<div class="col-xs-5 col-sm-3" id="name">' + display_name + '</div>' + 
-        '<div class="col-xs-5 col-sm-8" id="streaming">'+ game + '</div>' +
-        '</div>';
+        '<div class="col-xs-5 col-sm-8" id="streaming">'+ streaming + '</div>' +
+        '</div></center>';
+            
         $("#display").append(html);
       } else {
         if (dataStream.stream) {
@@ -51,7 +46,6 @@ $(document).ready( function() {
         }
 
         $.getJSON(channelURL, function(dataChannel) {
-
           if (dataChannel.url != "") {
             if (dataChannel.logo != null) {
               logo = dataChannel.logo;
@@ -62,25 +56,36 @@ $(document).ready( function() {
             display_name = dataChannel.display_name;
 
             if (online === "True") {
-              game = dataChannel.game ;
+              streaming = dataChannel.game ;
             } else {
-              game = "Offline";
+              streaming = "Offline";
             }
 
-            html = '<div class="row">' +
+            if (online === "True") {
+              status = "active";
+            } else {
+              status = "offline";
+            }
+
+            html = '<center><div class="row ' + status + '">' +
             '<div class="col-xs-2 col-sm-1" id="icon">' + '<img src="' + logo + '" height=50 width=50"></div>' +
             '<div class="col-xs-5 col-sm-3" id="name"><a href="' + dataChannel.url + '" target="_blank">' + display_name + '</a></div>' + 
-            '<div class="col-xs-5 col-sm-8" id="streaming">'+ game + '</div>' +
-            '</div>';
-            $("#display").append(html);
+            '<div class="col-xs-5 col-sm-8" id="streaming">'+ streaming + '</div>' +
+            '</div></center>';
+
+            if (status === "active") {
+              $("#display").prepend(html);
+            } else {
+              $("#display").append(html);
+            }
           }
         });
-
       }
 
-
-      
-
+      if (index < users.length - 1) {
+        index += 1;
+        getData(users[index], index);
+      }
     });
   }
 });
